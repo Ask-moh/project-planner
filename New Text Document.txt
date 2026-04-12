@@ -1,0 +1,12 @@
+cd django_backend
+# إنشاء بيئة افتراضية جديدة لضمان عدم تداخل المكتبات
+python -m venv venv
+# تفعيل البيئة
+.\venv\Scripts\activate
+# تثبيت المكتبات (إذا كان لديك ملف requirements.txt)
+pip install -r requirements.txt
+
+
+إعداد بيئة الـ Frontend 
+cd ../frontend
+npm install
