@@ -5,10 +5,10 @@ import Modal from './Modal';
 
 // FIXED: Columns now match backend statuses exactly (was 'doing', now 'in_progress' + 'review')
 const COLUMNS = [
-  { key: 'todo', label: 'To Do', color: 'bg-slate-400' },
-  { key: 'in_progress', label: 'In Progress', color: 'bg-blue-500' },
-  { key: 'review', label: 'Review', color: 'bg-yellow-500' },
-  { key: 'done', label: 'Done', color: 'bg-green-500' },
+  { key: 'todo', label: 'To Do', color: 'bg-slate-400 dark:bg-slate-500' },
+  { key: 'in_progress', label: 'In Progress', color: 'bg-primary-500 dark:bg-primary-400' },
+  { key: 'review', label: 'Review', color: 'bg-amber-500 dark:bg-amber-400' },
+  { key: 'done', label: 'Done', color: 'bg-emerald-500 dark:bg-emerald-400' },
 ];
 
 const PRIORITY_STYLES = {
@@ -22,32 +22,32 @@ function KanbanCard({ task, onMove, onDelete }) {
   return (
     <div className="kanban-card group" id={`task-${task.id}`}>
       <div className="flex items-start justify-between gap-2 mb-2">
-        <p className="text-sm font-semibold text-slate-800 leading-snug">{task.title}</p>
+        <p className="text-sm font-bold text-slate-800 dark:text-slate-200 leading-snug">{task.title}</p>
         <button
-          className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 transition-all flex-shrink-0"
+          className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-500 dark:text-slate-500 dark:hover:text-rose-400 transition-all flex-shrink-0"
           onClick={() => onDelete(task.id)}
         >
-          <Trash2 size={13} />
+          <Trash2 size={14} strokeWidth={2.5} />
         </button>
       </div>
       {task.description && (
-        <p className="text-xs text-slate-500 mb-2 line-clamp-2">{task.description}</p>
+        <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2 line-clamp-2">{task.description}</p>
       )}
-      <div className="flex items-center justify-between gap-2 mt-2">
+      <div className="flex items-center justify-between gap-2 mt-3">
         <span className={PRIORITY_STYLES[task.priority] || 'priority-medium'}>
           {task.priority || 'medium'}
         </span>
         {task.estimated_hours > 0 && (
-          <span className="text-xs text-slate-400">{task.estimated_hours}h</span>
+          <span className="text-xs font-bold text-slate-400 dark:text-slate-500">{task.estimated_hours}h</span>
         )}
       </div>
       {/* Move buttons */}
-      <div className="flex gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-all flex-wrap">
+      <div className="flex gap-1.5 mt-3 opacity-0 group-hover:opacity-100 transition-all flex-wrap">
         {COLUMNS.filter(c => c.key !== task.status).map(c => (
           <button
             key={c.key}
             onClick={() => onMove(task.id, c.key)}
-            className="text-xs px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full transition-all"
+            className="text-[10px] font-bold px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-all dark:bg-slate-700/50 dark:hover:bg-slate-700 dark:text-slate-300"
           >
             → {c.label}
           </button>
@@ -91,7 +91,7 @@ export default function KanbanBoard({ projectId, tasks, onRefresh }) {
           <div key={col.key} className="kanban-column">
             <div className="kanban-column-header">
               <div className="flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${col.color}`} />
+                <span className={`w-2.5 h-2.5 rounded-full shadow-sm ${col.color}`} />
                 <span className="kanban-column-title">{col.label}</span>
               </div>
               <span className="kanban-count">{grouped[col.key].length}</span>
@@ -112,7 +112,7 @@ export default function KanbanBoard({ projectId, tasks, onRefresh }) {
                 onClick={() => setShowModal(true)}
                 id="kanban-add-task-btn"
               >
-                <Plus size={14} />
+                <Plus size={16} strokeWidth={2.5} />
                 Add Task
               </button>
             )}

@@ -205,14 +205,14 @@ export default function GanttChart() {
     <div className="flex flex-col gap-6 p-2 animate-fade-in max-w-[1400px] mx-auto pb-20">
       <div className="flex items-center justify-between no-print">
         <div>
-          <h1 className="text-3xl font-black text-slate-800 tracking-tight">Enterprise Gantt</h1>
-          <p className="text-slate-500 font-medium">Manage team resources and dependencies.</p>
+          <h1 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Enterprise Gantt</h1>
+          <p className="text-slate-500 dark:text-slate-400 font-medium">Manage team resources and dependencies.</p>
         </div>
         <div className="flex items-center gap-3">
           <button onClick={() => window.print()} className="btn-secondary py-2 px-4 flex items-center gap-2 text-sm font-bold">
             <Calendar size={16} /> Export PDF
           </button>
-          <select className="form-select w-44 text-sm font-bold h-10" value={selected} onChange={e => setSelected(e.target.value)}>
+          <select className="form-select w-44 text-sm font-bold h-10 bg-white dark:bg-slate-800 dark:text-white dark:border-slate-700 pointer-events-auto" value={selected} onChange={e => setSelected(e.target.value)}>
             <option value="all">All Projects</option>
             {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
@@ -220,42 +220,42 @@ export default function GanttChart() {
       </div>
 
       <div className="grid grid-cols-4 gap-6 no-print">
-        <div className="card p-5 bg-gradient-to-br from-indigo-500 to-indigo-600 border-none text-white shadow-lg shadow-indigo-100">
-           <p className="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">Project Progress</p>
+        <div className="card p-5 bg-gradient-to-br from-indigo-500 to-indigo-600 border-none text-white shadow-lg shadow-indigo-200 dark:shadow-none">
+           <p className="text-[10px] font-black uppercase tracking-widest opacity-80 mb-1">Project Progress</p>
            <h3 className="text-3xl font-black">{stats.percent}%</h3>
         </div>
         <div className="card p-5 flex flex-col justify-center">
-           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Total Tasks</p>
-           <h3 className="text-3xl font-black text-slate-800">{stats.total}</h3>
+           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Total Tasks</p>
+           <h3 className="text-3xl font-black text-slate-800 dark:text-slate-100">{stats.total}</h3>
         </div>
-        <div className="card p-5 flex flex-col justify-center border-l-4 border-l-red-500">
-           <p className="text-[10px] font-black uppercase tracking-widest text-red-400 mb-1">Critical Overdue</p>
-           <h3 className="text-3xl font-black text-red-600">{stats.overdue}</h3>
+        <div className="card p-5 flex flex-col justify-center border-l-4 border-l-rose-500">
+           <p className="text-[10px] font-black uppercase tracking-widest text-rose-400 mb-1">Critical Overdue</p>
+           <h3 className="text-3xl font-black text-rose-600 dark:text-rose-500">{stats.overdue}</h3>
         </div>
-        <div className="card p-5 flex flex-col justify-center">
+        <div className="card p-5 flex flex-col justify-center border-l-4 border-l-emerald-500">
            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-1">Active Team</p>
-           <h3 className="text-3xl font-black text-emerald-600">{stats.teamCount}</h3>
+           <h3 className="text-3xl font-black text-emerald-600 dark:text-emerald-500">{stats.teamCount}</h3>
         </div>
       </div>
 
-      <div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-100 shadow-sm no-print">
+      <div className="flex items-center justify-between bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm no-print">
         <div className="flex items-center gap-6">
-          <div className="flex bg-slate-100 p-1.5 rounded-xl">
-            <button className={`px-4 py-1.5 text-xs font-black rounded-lg transition-all ${zoom === 'days' ? 'bg-white text-primary-600 shadow-md' : 'text-slate-500'}`} onClick={() => setZoom('days')}>DAYS</button>
-            <button className={`px-4 py-1.5 text-xs font-black rounded-lg transition-all ${zoom === 'weeks' ? 'bg-white text-primary-600 shadow-md' : 'text-slate-500'}`} onClick={() => setZoom('weeks')}>WEEKS</button>
+          <div className="flex bg-slate-100 dark:bg-slate-700 p-1.5 rounded-xl">
+            <button className={`px-4 py-1.5 text-xs font-black rounded-lg transition-all ${zoom === 'days' ? 'bg-white dark:bg-slate-600 text-primary-600 dark:text-primary-400 shadow-md' : 'text-slate-500 dark:text-slate-400'}`} onClick={() => setZoom('days')}>DAYS</button>
+            <button className={`px-4 py-1.5 text-xs font-black rounded-lg transition-all ${zoom === 'weeks' ? 'bg-white dark:bg-slate-600 text-primary-600 dark:text-primary-400 shadow-md' : 'text-slate-500 dark:text-slate-400'}`} onClick={() => setZoom('weeks')}>WEEKS</button>
           </div>
-          <div className="h-6 w-px bg-slate-200" />
+          <div className="h-6 w-px bg-slate-200 dark:bg-slate-700" />
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Filter size={14} className="text-slate-400" />
-              <select className="text-xs font-bold bg-transparent border-none focus:ring-0 text-slate-600 cursor-pointer" value={priorityFilter} onChange={e => setPriorityFilter(e.target.value)}>
+              <select className="text-xs font-bold bg-transparent border-none focus:ring-0 text-slate-600 dark:text-slate-300 cursor-pointer" value={priorityFilter} onChange={e => setPriorityFilter(e.target.value)}>
                 <option value="all">Any Priority</option>
                 <option value="critical">Critical</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option>
               </select>
             </div>
             <div className="flex items-center gap-2">
               <Users size={14} className="text-slate-400" />
-              <select className="text-xs font-bold bg-transparent border-none focus:ring-0 text-slate-600 cursor-pointer" value={assigneeFilter} onChange={e => setAssigneeFilter(e.target.value)}>
+              <select className="text-xs font-bold bg-transparent border-none focus:ring-0 text-slate-600 dark:text-slate-300 cursor-pointer" value={assigneeFilter} onChange={e => setAssigneeFilter(e.target.value)}>
                 <option value="all">Any Assignee</option>
                 {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
               </select>
@@ -264,27 +264,27 @@ export default function GanttChart() {
         </div>
       </div>
 
-      <div className="card overflow-hidden border-slate-200 shadow-xl">
+      <div className="card overflow-hidden border-slate-200 dark:border-slate-700 shadow-xl dark:shadow-none bg-white dark:bg-slate-800">
         <div className="overflow-x-auto" ref={scrollRef}>
           <div style={{ minWidth: (allDays.length * unitWidth) + 200 }}>
             {/* Header */}
-            <div className="flex bg-slate-50/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200">
-              <div className="w-56 flex-shrink-0 px-6 py-4 border-r border-slate-200 font-black text-xs text-slate-500 uppercase tracking-widest flex items-center gap-2">
+            <div className="flex bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200 dark:border-slate-700">
+              <div className="w-56 flex-shrink-0 px-6 py-4 border-r border-slate-200 dark:border-slate-700 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-2">
                 <ArrowRight size={14} /> Task List
               </div>
               <div className="flex">
                 {groupedMonths.map(g => (
                   <div key={g.key} style={{ width: g.days.length * unitWidth }}>
-                    <div className="text-[10px] font-black text-slate-400 px-3 py-1.5 border-b border-slate-200 uppercase tracking-tighter">
+                    <div className="text-[10px] font-black text-slate-400 dark:text-slate-500 px-3 py-1.5 border-b border-slate-200 dark:border-slate-700 uppercase tracking-tighter">
                       {MONTH_NAMES[g.month]} {g.year}
                     </div>
                     <div className="flex">
                       {zoom === 'days' ? g.days.map(d => (
-                        <div key={d.date.toISOString()} style={{ width: unitWidth }} className={`text-[10px] text-center py-2 border-r border-slate-100 flex-shrink-0 font-bold ${d.date.toDateString() === today.toDateString() ? 'bg-indigo-500 text-white' : 'text-slate-400'}`}>
+                        <div key={d.date.toISOString()} style={{ width: unitWidth }} className={`text-[10px] text-center py-2 border-r border-slate-100 dark:border-slate-700/50 flex-shrink-0 font-bold ${d.date.toDateString() === today.toDateString() ? 'bg-primary-500 dark:bg-primary-600 text-white' : 'text-slate-400 dark:text-slate-500'}`}>
                           {d.day}
                         </div>
                       )) : g.days.filter((_, i) => i % 7 === 0).map((d, i) => (
-                        <div key={d.date.toISOString()} style={{ width: WEEK_W }} className="text-[10px] text-center py-2 border-r border-slate-200 flex-shrink-0 font-black text-slate-500 bg-slate-100/50">
+                        <div key={d.date.toISOString()} style={{ width: WEEK_W }} className="text-[10px] text-center py-2 border-r border-slate-200 dark:border-slate-700/50 flex-shrink-0 font-black text-slate-500 dark:text-slate-400 bg-slate-100/50 dark:bg-slate-800/50">
                           W{i + 1}
                         </div>
                       ))}
@@ -298,7 +298,7 @@ export default function GanttChart() {
             <div className="relative">
               {allDays.length > 0 && (
                 <div 
-                  className="absolute top-0 bottom-0 w-0.5 bg-red-500/40 z-30 pointer-events-none" 
+                  className="absolute top-0 bottom-0 w-0.5 bg-rose-500/40 z-30 pointer-events-none" 
                   style={{ left: `${Math.round((new Date(today.getFullYear(), today.getMonth(), today.getDate()) - allDays[0].date) / 86400000) * unitWidth + 224}px` }} 
                 />
               )}
@@ -307,7 +307,7 @@ export default function GanttChart() {
               <svg className="absolute inset-0 pointer-events-none z-10" style={{ left: 224, width: allDays.length * unitWidth, height: filteredTasks.length * 52 }}>
                 <defs>
                   <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                    <polygon points="0 0, 10 3.5, 0 7" fill="currentColor" />
+                    <polygon points="0 0, 10 3.5, 0 7" fill="currentColor" className="text-slate-400 dark:text-slate-600" />
                   </marker>
                 </defs>
                 {filteredTasks.map((task, rowIndex) => (
@@ -325,26 +325,26 @@ export default function GanttChart() {
                     const y2 = (rowIndex * 52) + 26;
                     
                     const isConflict = tStart < sEnd;
-                    const color = isConflict ? "#ef4444" : "#cbd5e1";
+                    const color = isConflict ? "#f43f5e" : "#94a3b8"; 
                     const path = `M ${x1} ${y1} C ${x1 + 40} ${y1}, ${x2 - 40} ${y2}, ${x2} ${y2}`;
                     
-                    return <path key={`${sid}-${task.id}`} d={path} stroke={color} strokeWidth="1.5" fill="none" markerEnd="url(#arrowhead)" />;
+                    return <path key={`${sid}-${task.id}`} d={path} stroke={color} strokeWidth="2" fill="none" markerEnd="url(#arrowhead)" />;
                   })
                 ))}
               </svg>
 
               {loading ? (
-                <div className="flex items-center justify-center h-40 text-slate-400 font-bold uppercase tracking-widest text-xs">Loading Timeline...</div>
+                <div className="flex items-center justify-center h-40 text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest text-xs">Loading Timeline...</div>
               ) : filteredTasks.length === 0 ? (
-                <div className="flex items-center justify-center h-40 text-slate-400 font-bold uppercase tracking-widest text-xs">No tasks found</div>
+                <div className="flex items-center justify-center h-40 text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest text-xs">No tasks found</div>
               ) : (
                 filteredTasks.map((task, i) => (
-                  <div key={task.id} className="flex border-b border-slate-50 hover:bg-slate-50/50 transition-colors h-[52px]">
-                    <div className="w-56 flex-shrink-0 px-6 py-3 border-r border-slate-200 bg-white/80 flex items-center gap-3 z-20">
+                  <div key={task.id} className="flex border-b border-slate-50 dark:border-slate-700/50 hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors h-[52px]">
+                    <div className="w-56 flex-shrink-0 px-6 py-3 border-r border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 flex items-center gap-3 z-20">
                        {task.assignee_details ? (
                          task.assignee_details.avatar ? <img src={task.assignee_details.avatar} className="w-6 h-6 rounded-full" alt="" /> : getAvatarFallback(task.assignee_details.name)
-                       ) : <div className="w-6 h-6 rounded-full bg-slate-100" />}
-                       <span className="text-xs font-bold text-slate-700 truncate">{task.title}</span>
+                       ) : <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-700" />}
+                       <span className="text-xs font-bold text-slate-700 dark:text-slate-300 truncate">{task.title}</span>
                     </div>
                     <div className="relative flex-grow">
                        <div 
@@ -364,57 +364,57 @@ export default function GanttChart() {
       </div>
 
       {selectedTask && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4" onClick={() => setSelectedTask(null)}>
-          <div className="bg-white rounded-[32px] shadow-2xl w-full max-w-lg overflow-hidden animate-scale-in" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4" onClick={() => setSelectedTask(null)}>
+          <div className="bg-white dark:bg-slate-800 rounded-[32px] shadow-2xl w-full max-w-lg overflow-hidden animate-scale-in border border-slate-200 dark:border-slate-700" onClick={e => e.stopPropagation()}>
             <div className="p-8">
                <div className="flex justify-between items-start mb-6">
                  <div className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest" style={{ backgroundColor: `${getPriorityColor(selectedTask.priority)}20`, color: getPriorityColor(selectedTask.priority) }}>
                    {selectedTask.priority} Priority
                  </div>
-                 <button onClick={() => setSelectedTask(null)} className="p-2 hover:bg-slate-100 rounded-2xl transition-all text-slate-400"><X size={24} /></button>
+                 <button onClick={() => setSelectedTask(null)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-2xl transition-all text-slate-400"><X size={24} strokeWidth={2.5} /></button>
                </div>
 
-               <div className="flex items-center gap-4 mb-8 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+               <div className="flex items-center gap-4 mb-8 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-700">
                   {selectedTask.assignee_details?.avatar ? (
-                    <img src={selectedTask.assignee_details.avatar} className="w-12 h-12 rounded-full border-2 border-white shadow-md" alt="" />
+                    <img src={selectedTask.assignee_details.avatar} className="w-12 h-12 rounded-full border-2 border-white dark:border-slate-800 shadow-md" alt="" />
                   ) : (
                     <div className="w-12 h-12 rounded-full bg-primary-500 text-white flex items-center justify-center font-black text-xl shadow-md uppercase">{selectedTask.assignee_details?.name?.[0] || '?'}</div>
                   )}
                   <div>
-                    <h4 className="font-black text-slate-800">{selectedTask.assignee_details?.name || 'Unassigned'}</h4>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">{selectedTask.assignee_details?.role || 'Team Member'}</p>
+                    <h4 className="font-black text-slate-800 dark:text-white">{selectedTask.assignee_details?.name || 'Unassigned'}</h4>
+                    <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{selectedTask.assignee_details?.role || 'Team Member'}</p>
                   </div>
                </div>
 
-               <h2 className="text-2xl font-black text-slate-800 mb-2 leading-tight">{selectedTask.title}</h2>
-               <p className="text-slate-500 text-sm mb-8 font-medium leading-relaxed">{selectedTask.description || "No description provided."}</p>
+               <h2 className="text-2xl font-black text-slate-800 dark:text-white mb-2 leading-tight">{selectedTask.title}</h2>
+               <p className="text-slate-500 dark:text-slate-400 text-sm mb-8 font-medium leading-relaxed">{selectedTask.description || "No description provided."}</p>
 
                <div className="grid grid-cols-2 gap-4 mb-8">
-                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                  <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-700">
                     <p className="text-[10px] font-black text-slate-400 uppercase mb-2">STATUS</p>
-                    <select className="w-full bg-transparent font-black text-slate-700 border-none p-0 focus:ring-0 cursor-pointer text-sm" value={selectedTask.status} onChange={e => handleUpdateStatus(e.target.value)} disabled={isSaving}>
+                    <select className="w-full bg-transparent font-black text-slate-700 dark:text-slate-200 border-none p-0 focus:ring-0 cursor-pointer text-sm" value={selectedTask.status} onChange={e => handleUpdateStatus(e.target.value)} disabled={isSaving}>
                        <option value="todo">To Do</option><option value="in_progress">In Progress</option><option value="review">Review</option><option value="done">Done</option>
                     </select>
                   </div>
-                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                  <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-700">
                     <p className="text-[10px] font-black text-slate-400 uppercase mb-2">ESTIMATED TIME</p>
-                    <p className="font-black text-slate-700 text-sm">{selectedTask.estimated_hours || 0} HOURS</p>
+                    <p className="font-black text-slate-700 dark:text-slate-200 text-sm">{selectedTask.estimated_hours || 0} HOURS</p>
                   </div>
                </div>
 
                <div className="flex gap-4">
-                  <div className="flex-1 bg-indigo-50/50 p-4 rounded-2xl border border-indigo-100/50">
-                    <p className="text-[10px] font-black text-indigo-400 uppercase mb-1">START</p>
-                    <p className="font-black text-indigo-700 text-sm">{getTaskDates(selectedTask).start.toLocaleDateString()}</p>
+                  <div className="flex-1 bg-primary-50/50 dark:bg-primary-900/20 p-4 rounded-2xl border border-primary-100/50 dark:border-primary-800/30">
+                    <p className="text-[10px] font-black text-primary-400 uppercase mb-1">START</p>
+                    <p className="font-black text-primary-700 dark:text-primary-300 text-sm">{getTaskDates(selectedTask).start.toLocaleDateString()}</p>
                   </div>
-                  <div className="flex-1 bg-rose-50/50 p-4 rounded-2xl border border-rose-100/50">
+                  <div className="flex-1 bg-rose-50/50 dark:bg-rose-900/20 p-4 rounded-2xl border border-rose-100/50 dark:border-rose-800/30">
                     <p className="text-[10px] font-black text-rose-400 uppercase mb-1">DUE DATE</p>
-                    <p className="font-black text-rose-700 text-sm">{getTaskDates(selectedTask).end.toLocaleDateString()}</p>
+                    <p className="font-black text-rose-700 dark:text-rose-300 text-sm">{getTaskDates(selectedTask).end.toLocaleDateString()}</p>
                   </div>
                </div>
             </div>
-            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
-               <button onClick={() => setSelectedTask(null)} className="px-8 py-3 bg-white border-2 border-slate-200 text-slate-700 rounded-2xl font-black text-sm hover:border-primary-500 hover:text-primary-600 transition-all shadow-sm">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-700 flex justify-end">
+               <button onClick={() => setSelectedTask(null)} className="px-8 py-3 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-2xl font-black text-sm hover:border-primary-500 dark:hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 transition-all shadow-sm">
                  {isSaving ? 'SYNCING...' : 'CLOSE'}
                </button>
             </div>

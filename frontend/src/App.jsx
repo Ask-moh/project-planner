@@ -11,6 +11,7 @@ import Team from './pages/Team';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 function AuthenticatedApp() {
   const { token } = useAuth();
@@ -26,7 +27,7 @@ function AuthenticatedApp() {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-100">
+    <div className="flex min-h-screen bg-slate-100 dark:bg-dark transition-colors duration-300">
       <Sidebar />
       <div className="flex-1">
         <Header />
@@ -51,10 +52,12 @@ function AuthenticatedApp() {
 export default function App() {
   return (
     <BrowserRouter>
-      {/* تغليف التطبيق بصلاحيات الحماية */}
-      <AuthProvider>
-        <AuthenticatedApp />
-      </AuthProvider>
+      {/* تغليف التطبيق بصلاحيات الحماية والثيم */}
+      <ThemeProvider>
+        <AuthProvider>
+          <AuthenticatedApp />
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

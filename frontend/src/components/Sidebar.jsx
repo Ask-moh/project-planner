@@ -57,8 +57,8 @@ export default function Sidebar() {
       <div className="sidebar-user">
         <div className="sidebar-avatar">{initials}</div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-slate-800 truncate">{displayName}</p>
-          <p className="text-xs text-primary-600 font-medium">Active</p>
+          <p className="text-sm font-bold text-slate-800 dark:text-slate-200 truncate">{displayName}</p>
+          <p className="text-xs text-primary-600 dark:text-primary-400 font-semibold">Active</p>
         </div>
       </div>
     </aside>
