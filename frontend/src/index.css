@@ -145,7 +145,7 @@
     @apply glass glass-hover rounded-[2rem];
   }
   .stat-card {
-    @apply card p-6 flex flex-col justify-between relative overflow-hidden group;
+    @apply card p-6 flex flex-col justify-between relative overflow-hidden;
   }
 
   /* Badges */

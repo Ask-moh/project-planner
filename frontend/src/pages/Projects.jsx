@@ -12,13 +12,28 @@ export default function Projects() {
   const [showModal, setShowModal] = useState(false);
   const [showAIModal, setShowAIModal] = useState(false);
   const [error, setError] = useState(null);
+  
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
 
-  const load = async () => {
+  const load = async (page = currentPage) => {
     try {
+      setLoading(true);
       setError(null);
-      const data = await api.getProjects();
-      setProjects(data);
+      const data = await api.getProjectsPaginated(page);
+      
+      // Support both paginated and non-paginated gracefully
+      if (data.results) {
+        setProjects(data.results);
+        // Assuming PAGE_SIZE = 20 from settings
+        setTotalPages(Math.ceil(data.count / 20));
+      } else {
+        setProjects(data);
+        setTotalPages(1);
+      }
+      setCurrentPage(page);
     } catch (err) {
       console.error(err);
       setError(err.message || "An unexpected error occurred");
@@ -76,7 +91,7 @@ export default function Projects() {
             </svg>
             <p className="font-semibold">Failed to load projects</p>
             <p className="text-sm mt-1 mb-4">{error}</p>
-            <button className="btn-secondary" onClick={load}>Try Again</button>
+            <button className="btn-secondary" onClick={() => load()}>Try Again</button>
           </div>
         ) : loading ? (
           <div className="flex items-center justify-center h-64 text-slate-400 dark:text-slate-500 font-medium">Loading...</div>
@@ -90,11 +105,36 @@ export default function Projects() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-            {projects.map(p => (
-              <ProjectCard key={p.id} project={p} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+              {projects.map(p => (
+                <ProjectCard key={p.id} project={p} />
+              ))}
+            </div>
+            
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-6 gap-2">
+                {[...Array(totalPages)].map((_, i) => {
+                  const pageNumber = i + 1;
+                  const isActive = pageNumber === currentPage;
+                  return (
+                    <button
+                      key={pageNumber}
+                      onClick={() => load(pageNumber)}
+                      className={`w-10 h-10 rounded-xl font-bold transition-all duration-300 ${
+                        isActive 
+                          ? 'bg-primary-600 outline-none text-white shadow-md shadow-primary-500/30' 
+                          : 'bg-white/50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700'
+                      }`}
+                    >
+                      {pageNumber}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </>
         )}
       </div>
 

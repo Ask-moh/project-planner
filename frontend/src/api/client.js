@@ -1,13 +1,18 @@
 const BASE_URL = '/api';
 
 export const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
-  return token ? { 'Authorization': `Bearer ${token}` } : {};
+  // We no longer need to manually attach the token because it's in HttpOnly cookies
+  return {};
 };
 
-function logout() {
-  localStorage.removeItem('token');
-  localStorage.removeItem('refreshToken');
+async function logout() {
+  try {
+    await fetch(`${BASE_URL}/logout/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
+    });
+  } catch(e) {}
   localStorage.removeItem('email');
   window.location.href = '/login';
 }
@@ -20,10 +25,10 @@ async function request(path, options = {}, isRetry = false) {
     let res = await fetch(`${BASE_URL}${path}`, {
       headers: { 
         'Content-Type': 'application/json',
-        ...getAuthHeaders(),
         ...options.headers 
       },
       ...options,
+      credentials: 'include', // THIS is required for cookies
       body: options.body ? JSON.stringify(options.body) : undefined,
       signal: controller.signal,
     });
@@ -32,22 +37,16 @@ async function request(path, options = {}, isRetry = false) {
 
     // Handle 401 Unauthorized
     if (res.status === 401 && !isRetry) {
-      const refreshToken = localStorage.getItem('refreshToken');
-      if (refreshToken) {
+      if (path !== '/token/' && path !== '/token/refresh/') {
         try {
           const refreshRes = await fetch(`${BASE_URL}/token/refresh/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ refresh: refreshToken })
+            credentials: 'include' // Passes the refresh cookie
           });
           
           if (refreshRes.ok) {
-            const data = await refreshRes.json();
-            localStorage.setItem('token', data.access);
-            if (data.refresh) {
-              localStorage.setItem('refreshToken', data.refresh);
-            }
-            // Retry the original request
+            // Retry the original request since cookies are updated
             return request(path, options, true);
           } else {
             logout();
@@ -56,7 +55,8 @@ async function request(path, options = {}, isRetry = false) {
           logout();
         }
       } else {
-        logout();
+        // If we are currently trying to login/refresh and we get 401, don't loop
+        throw new Error('Authentication failed');
       }
     }
 
@@ -81,25 +81,26 @@ async function request(path, options = {}, isRetry = false) {
 
 export const api = {
   // Projects
-  getProjects: () => request('/projects'),
+  getProjects: (page = 1) => request(`/projects?page=${page}`).then(data => data.results || data),
+  getProjectsPaginated: (page = 1) => request(`/projects?page=${page}`),
   getProject: (id) => request(`/projects/${id}`),
   createProject: (data) => request('/projects', { method: 'POST', body: data }),
   updateProject: (id, data) => request(`/projects/${id}`, { method: 'PUT', body: data }),
   deleteProject: (id) => request(`/projects/${id}`, { method: 'DELETE' }),
 
   // Tasks
-  getTasks: (projectId) => request(`/tasks${projectId ? `?projectId=${projectId}` : ''}`),
+  getTasks: (projectId, page = 1) => request(`/tasks?page=${page}${projectId ? `&projectId=${projectId}` : ''}`).then(data => data.results || data),
   createTask: (data) => request('/tasks', { method: 'POST', body: data }),
   updateTask: (id, data) => request(`/tasks/${id}`, { method: 'PUT', body: data }),
   patchTask: (id, data) => request(`/tasks/${id}`, { method: 'PATCH', body: data }),
   deleteTask: (id) => request(`/tasks/${id}`, { method: 'DELETE' }),
 
   // Users
-  getUsers: () => request('/users'),
+  getUsers: () => request('/users').then(data => data.results || data),
   createUser: (data) => request('/users', { method: 'POST', body: data }),
 
   // Notifications
-  getNotifications: () => request('/notifications'),
+  getNotifications: () => request('/notifications').then(data => data.results || data),
   markAllNotificationsRead: () => request('/notifications/mark-read', { method: 'POST' }),
   markNotificationRead: (id) => request(`/notifications/${id}`, { method: 'PATCH', body: { is_read: true } }),
 
@@ -110,4 +111,8 @@ export const api = {
   // AI
   generatePlan: (data) => request('/ai/plan', { method: 'POST', body: data }),
   savePlan: (data) => request('/ai/save-plan', { method: 'POST', body: data }),
+  
+  // Auth
+  login: (data) => request('/token/', { method: 'POST', body: data }),
+  logout: () => logout(),
 };

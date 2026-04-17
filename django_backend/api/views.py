@@ -3,9 +3,11 @@ import requests
 import json
 import os
 import logging
+from django.conf import settings
 from rest_framework import viewsets, views, status, generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.db.models import Count, Q
 from django.utils import timezone
 from datetime import timedelta
@@ -16,6 +18,69 @@ from .serializers import (
 )
 
 logger = logging.getLogger(__name__)
+
+def set_jwt_cookies(response, access_token, refresh_token=None):
+    cookie_settings = getattr(settings, 'SIMPLE_JWT', {})
+    
+    response.set_cookie(
+        key=cookie_settings.get('AUTH_COOKIE', 'access'),
+        value=access_token,
+        expires=cookie_settings.get('ACCESS_TOKEN_LIFETIME', timedelta(minutes=15)),
+        secure=cookie_settings.get('AUTH_COOKIE_SECURE', False),
+        httponly=cookie_settings.get('AUTH_COOKIE_HTTP_ONLY', True),
+        samesite=cookie_settings.get('AUTH_COOKIE_SAMESITE', 'Lax')
+    )
+    if refresh_token:
+        response.set_cookie(
+            key=cookie_settings.get('AUTH_COOKIE_REFRESH', 'refresh'),
+            value=refresh_token,
+            expires=cookie_settings.get('REFRESH_TOKEN_LIFETIME', timedelta(days=7)),
+            secure=cookie_settings.get('AUTH_COOKIE_SECURE', False),
+            httponly=cookie_settings.get('AUTH_COOKIE_HTTP_ONLY', True),
+            samesite=cookie_settings.get('AUTH_COOKIE_SAMESITE', 'Lax')
+        )
+
+class CookieTokenObtainPairView(TokenObtainPairView):
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        if response.status_code == 200:
+            access_token = response.data.get('access')
+            refresh_token = response.data.get('refresh')
+            # Remove tokens from response body for added security, optionally keep UI fields.
+            # Usually frontends don't need the actual token if they rely on cookies.
+            # But let's keep it strictly in cookie for security.
+            response.data = {"message": "Login successful"}
+            set_jwt_cookies(response, access_token, refresh_token)
+        return response
+
+class CookieTokenRefreshView(TokenRefreshView):
+    def post(self, request, *args, **kwargs):
+        # Obtain refresh token from cookie instead of body if it's missing in body
+        cookie_settings = getattr(settings, 'SIMPLE_JWT', {})
+        refresh_cookie_name = cookie_settings.get('AUTH_COOKIE_REFRESH', 'refresh')
+        
+        refresh_token = request.COOKIES.get(refresh_cookie_name)
+        if refresh_token and 'refresh' not in request.data:
+            request.data['refresh'] = refresh_token
+            
+        response = super().post(request, *args, **kwargs)
+        if response.status_code == 200:
+            access_token = response.data.get('access')
+            new_refresh_token = response.data.get('refresh')
+            response.data = {"message": "Token refreshed successfully"}
+            set_jwt_cookies(response, access_token, new_refresh_token)
+        return response
+
+class LogoutView(views.APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        response = Response({"message": "Logout successful"})
+        cookie_settings = getattr(settings, 'SIMPLE_JWT', {})
+        response.delete_cookie(cookie_settings.get('AUTH_COOKIE', 'access'))
+        response.delete_cookie(cookie_settings.get('AUTH_COOKIE_REFRESH', 'refresh'))
+        return response
+
 
 
 class RegisterView(generics.CreateAPIView):
