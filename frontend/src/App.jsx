@@ -14,9 +14,9 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 
 function AuthenticatedApp() {
-  const { token } = useAuth();
+  const { isAuthenticated } = useAuth();
   
-  if (!token) {
+  if (!isAuthenticated) {
     return (
       <Routes>
         <Route path="/login" element={<Login />} />

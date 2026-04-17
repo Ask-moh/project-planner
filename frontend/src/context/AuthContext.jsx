@@ -1,32 +1,28 @@
 import { createContext, useContext, useState } from 'react';
+import { api } from '../api/client';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => localStorage.getItem('token'));
+  // Since we use HttpOnly cookies, we just need a flag to know if they are logged in
+  const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('isAuthenticated') === 'true');
   const [user, setUser] = useState(() => localStorage.getItem('email'));
 
   const login = async (email, password) => {
-    const res = await fetch('/api/token/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-    
-    if (res.ok) {
-      const data = await res.json();
-      localStorage.setItem('token', data.access);
-      localStorage.setItem('refreshToken', data.refresh);
+    try {
+      await api.login({ email, password });
+      localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('email', email);
-      setToken(data.access);
+      setIsAuthenticated(true);
       setUser({ email });
       return true;
-    } else {
+    } catch(e) {
       throw new Error('Invalid credentials');
     }
   };
 
   const register = async (name, email, password) => {
+    // We can use native fetch or api client, let's use the api client if method exists, else fetch:
     const res = await fetch('/api/register/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -42,15 +38,15 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
+    api.logout();
+    localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('email');
-    setToken(null);
+    setIsAuthenticated(false);
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ token, user, login, register, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
